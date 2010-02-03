@@ -67,4 +67,7 @@ Then, run the examples from the `examples` directory:
 
 ## Author
 
-Michael Stillwell <mjs@beebo.org>
+Michael Stillwell
+<mjs@beebo.org>
+<http://beebo.org>
+[@ithinkihaveacat](http://twitter.com/ithinkihaveacat)
