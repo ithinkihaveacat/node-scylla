@@ -68,6 +68,6 @@ Then, run the examples from the `examples` directory:
 ## Author
 
 Michael Stillwell
-<mjs@beebo.org>
+[mjs@beebo.org](mailto:mjs@beebo.org)
 <http://beebo.org>
 [@ithinkihaveacat](http://twitter.com/ithinkihaveacat)
