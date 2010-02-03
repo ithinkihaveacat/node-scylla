@@ -1,10 +1,18 @@
 # Scylla
 
-A simple [EJSGI-compatible](http://github.com/isaacs/ejsgi) router for
-[NodeJS](http://nodejs.org/).
+An [EJSGI-compatible](http://github.com/isaacs/ejsgi) router/microframework
+for [NodeJS](http://nodejs.org/).
 
-Scylla converts an object with method names like `GET /user/(.*)` into a
-function suitable for passing to `ejsgi.Server(...)`.
+A Scylla application is simply a JavaScript object that inherits from
+`scylla.Base`.  To figure out how to route a request, Scylla looks the
+method names of this object, which double as URL-matching patterns: the
+method `GET /user/(.*)` is invoked when a `GET` request is made for a URL
+like `/user/mjs`.  (And `mjs` is passed as an argument to the method.)
+
+If `myapp` is a Scylla application, calling the `dispatcher()` method on it
+returns a EJSGI application suitable for passing to `ejsgi.Server(...)`:
+
+    ejsgi.Server(myapp.dispatcher(), "localhost", 8000).start()
 
 ## Examples
 
@@ -67,7 +75,6 @@ Then, run the examples from the `examples` directory:
 
 ## Author
 
-Michael Stillwell
-[mjs@beebo.org](mailto:mjs@beebo.org)
-<http://beebo.org>
+Michael Stillwell<br/>
+[mjs@beebo.org](mailto:mjs@beebo.org)<br/>
 [@ithinkihaveacat](http://twitter.com/ithinkihaveacat)
