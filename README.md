@@ -12,7 +12,12 @@ like `/user/mjs`.  (And `mjs` is passed as an argument to the method.)
 If `myapp` is a Scylla application, calling the `dispatcher()` method on it
 returns a EJSGI application suitable for passing to `ejsgi.Server(...)`:
 
-    ejsgi.Server(myapp.dispatcher(), "localhost", 8000).start()
+    ejsgi.Server(myapp.adapter('ejsgi'), "localhost", 8000).start()
+
+If you pass the `nodejs` adapter style instead, you are returned a function
+suitable for passing to `http.createServer(...)`:
+
+    http.createServer(myapp.adapter('nodejs')).listen(8000);
 
 ## Examples
 
@@ -52,7 +57,9 @@ returns a EJSGI application suitable for passing to `ejsgi.Server(...)`:
 
     });
 
-    ejsgi.Server(new HelloWorld("Michael").dispatcher(), "localhost", 8000).start();
+    ejsgi.Server(new HelloWorld("Michael").adapter('ejsgi'), "localhost", 8000).start();
+    // or, equivalently
+    http.createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
 
 ### Other Examples
 

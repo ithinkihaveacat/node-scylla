@@ -117,7 +117,8 @@ process.mixin(Static.prototype, {
 
 DEBUG = true;
 
-ejsgi.Server(new Static(".").dispatcher(), "localhost", 8000).start();
+ejsgi.Server(new Static(".").adapter('ejsgi'), "localhost", 8000).start();
+//require('http').createServer(new Static(".").adapter('nodejs')).listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');
 sys.puts('');

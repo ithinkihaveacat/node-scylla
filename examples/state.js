@@ -63,7 +63,8 @@ process.mixin(NameDemo.prototype, {
 
 DEBUG = true;
 
-ejsgi.Server(new NameDemo("Clem").dispatcher(), "localhost", 8000).start();
+ejsgi.Server(new NameDemo("Clem").adapter('ejsgi'), "localhost", 8000).start();
+//require('http').createServer(new NameDemo("Clem").adapter('nodejs')).listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');
 sys.puts('');

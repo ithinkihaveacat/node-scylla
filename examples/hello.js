@@ -37,7 +37,8 @@ process.mixin(HelloWorld.prototype, {
 
 DEBUG = true;
 
-ejsgi.Server(new HelloWorld("Michael").dispatcher(), "localhost", 8000).start();
+ejsgi.Server(new HelloWorld("Michael").adapter('ejsgi'), "localhost", 8000).start();
+//require('http').createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');
 sys.puts('');
