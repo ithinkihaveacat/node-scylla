@@ -1,4 +1,4 @@
-require.paths.unshift("../../ejsgi/lib");
+require.paths.unshift("../../ejsgi/lib"); // http://github.com/isaacs/ejsgi
 require.paths.unshift("../lib");
 
 var sys = require('sys'),
