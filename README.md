@@ -19,6 +19,9 @@ suitable for passing to `http.createServer(...)`:
 
     http.createServer(myapp.adapter('nodejs')).listen(8000);
 
+Note that even when using the `nodejs` adapter, you still need the `EJSGI`
+module installed.
+
 ## Examples
 
 ### Hello, World
