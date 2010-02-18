@@ -6,7 +6,7 @@ var scylla = require('scylla'),
     mime = require('mime'),
     sys = require('sys'),
     url = require('url'),
-    posix = require('posix'),
+    fs = require('fs'),
     events = require('events'),
     path = require('path');
 
@@ -75,37 +75,37 @@ process.mixin(Static.prototype, {
 
         var promise = new events.Promise();
 
-        var cat = posix.cat(filename, encoding);
+        fs.readFile(filename, encoding).addCallback(function(body) {
 
-        cat.addCallback(function(body) {
+            if (!body) {
 
-            self.log(matches[1]);
+                var res = {
+                    status: 404,
+                    headers: { },
+                    body: new req.jsgi.stream()
+                }
+                res.body.close();
 
-            var res = {
-                status: 200,
-                headers: {
-                    "content-type": contentType,
-                    "content-length": body.length
-                },
-                body: new req.jsgi.stream()
-            };
-            res.body.write(body); // TODO what to do with encoding?
-            res.body.close();
+                promise.emitSuccess(res);
 
-            promise.emitSuccess(res);
+            } else {
 
-        });
+                self.log(matches[1]);
 
-        cat.addErrback(function() {
+                var res = {
+                    status: 200,
+                    headers: {
+                        "content-type": contentType,
+                        "content-length": body.length
+                    },
+                    body: new req.jsgi.stream()
+                };
+                res.body.write(body); // TODO what to do with encoding?
+                res.body.close();
 
-            var res = {
-                status: 404,
-                headers: { },
-                body: new req.jsgi.stream()
+                promise.emitSuccess(res);
+
             }
-            res.body.close();
-
-            promise.emitSuccess(res);
 
         });
 
