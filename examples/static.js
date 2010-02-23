@@ -1,8 +1,6 @@
-require.paths.unshift("../../ejsgi/lib"); // http://github.com/isaacs/ejsgi
 require.paths.unshift("../lib");
 
 var scylla = require('scylla'),
-    ejsgi = require('ejsgi'),
     mime = require('mime'),
     sys = require('sys'),
     url = require('url'),
@@ -31,33 +29,27 @@ process.mixin(Static.prototype, {
         }
     },
 
-    'GET (/status)': function(req, matches) {
+    'GET (/status)': function(req, res, matches) {
 
         this.log(matches[1]);
 
-        var body = sys.inspect(this.count);
+        var body = sys.inspect(this.count) + "\n";
 
-        var res = {
-            body: new (req.jsgi.stream),
-            status: 200,
-            headers: {
-                "content-type": "application/json",
-                "content-length": body.length
-            }
-        };
-        res.body.write(body);
-        res.body.close();
-
-        return res;
+        res.writeHeader(200, {
+            "content-type": "application/json",
+            "content-length": body.length
+        });
+        res.write(body);
+        res.close();
 
     },
 
-    "GET /$": function(req) {
+    "GET /$": function(req, res) {
         req.url += "index.html";
-        return this.dispatch(req);
+        return this.dispatch(req, res);
     },
 
-    'GET (.*)': function(req, matches) {
+    'GET (.*)': function(req, res, matches) {
 
         var self = this;
 
@@ -67,49 +59,32 @@ process.mixin(Static.prototype, {
         var filename = path.join(this.docroot, matches[1]);
 
         if (filename.indexOf(this.docroot) !== 0) {
-            req.next();
+            res.writeHeader(404, {});
+            res.close();
+            return;
         }
 
         var contentType = mime.extToType(path.extname(req.url));
-        var encoding = contentType.slice(0, 4) === "text" ? "utf8" : "binary";
+        var encoding = contentType.slice(0, 4) === "text" ? "utf8" : "binary"; // TODO Not very reliable!
 
-        var promise = new events.Promise();
+        fs.readFile(filename, encoding, function (error, body) {
 
-        fs.readFile(filename, encoding).addCallback(function(body) {
-
-            if (!body) {
-
-                var res = {
-                    status: 404,
-                    headers: { },
-                    body: new req.jsgi.stream()
-                }
-                res.body.close();
-
-                promise.emitSuccess(res);
-
-            } else {
-
-                self.log(matches[1]);
-
-                var res = {
-                    status: 200,
-                    headers: {
-                        "content-type": contentType,
-                        "content-length": body.length
-                    },
-                    body: new req.jsgi.stream()
-                };
-                res.body.write(body); // TODO what to do with encoding?
-                res.body.close();
-
-                promise.emitSuccess(res);
-
+            if (error) {
+                res.writeHeader(404, {});
+                res.close();
+                return;
             }
 
-        });
+            self.log(matches[1]);
 
-        return promise;
+            res.writeHeader(200, {
+                "content-type": contentType,
+                "content-length": body.length
+            });
+            res.write(body);
+            res.close();
+
+        });
 
     }
 
@@ -117,8 +92,7 @@ process.mixin(Static.prototype, {
 
 DEBUG = true;
 
-ejsgi.Server(new Static(".").adapter('ejsgi'), "localhost", 8000).start();
-//require('http').createServer(new Static(".").adapter('nodejs')).listen(8000);
+require('http').createServer(new Static(".").adapter('nodejs')).listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');
 sys.puts('');

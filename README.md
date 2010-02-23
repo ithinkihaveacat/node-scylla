@@ -9,26 +9,19 @@ method names of this object, which double as URL-matching patterns: the
 method `GET /user/(.*)` is invoked when a `GET` request is made for a URL
 like `/user/mjs`.  (And `mjs` is passed as an argument to the method.)
 
-If `myapp` is a Scylla application, calling the `dispatcher()` method on it
-returns a EJSGI application suitable for passing to `ejsgi.Server(...)`:
-
-    ejsgi.Server(myapp.adapter('ejsgi'), "localhost", 8000).start()
-
-If you pass the `nodejs` adapter style instead, you are returned a function
-suitable for passing to `http.createServer(...)`:
+If `myapp` is a Scylla object, calling the `dispatcher()` method on it
+returns a function suitable for passing to `http.createServer(...)`:
 
     http.createServer(myapp.adapter('nodejs')).listen(8000);
-
-Note that even when using the `nodejs` adapter, you still need the `EJSGI`
-module installed.
 
 ## Examples
 
 ### Hello, World
 
+    require.paths.unshift("../lib");
+
     var sys = require('sys'),
-        scylla = require('scylla'),
-        ejsgi = require('ejsgi');
+        scylla = require('scylla');
 
     function HelloWorld(name) {
         scylla.Base.call(this);
@@ -39,41 +32,28 @@ module installed.
 
     process.mixin(HelloWorld.prototype, {
 
-        "GET /": function(req) {
-        
+        "GET /": function(req, res) {
+
             var body = "Hello, " + this.name + "!\n";
 
-            var res = {
-                body: new req.jsgi.stream(),
-                status: 200,
-                headers: {
-                    "content-type": "text/plain",
-                    "content-length": body.length
-                }
-            };
-            res.body.write(body);
-            res.body.close();
-
-            return res;
+            res.writeHeader(200, {
+                "content-type": "text/plain",
+                "content-length": body.length
+            });
+            res.write(body);
+            res.close();
 
         }
 
     });
 
-    ejsgi.Server(new HelloWorld("Michael").adapter('ejsgi'), "localhost", 8000).start();
-    // or, equivalently
-    http.createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
+    DEBUG = true;
+
+    require('http').createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
 
 ### Other Examples
 
-There are a few Scylla demos in the `examples` directory.  To run them,
-first clone the [EJSGI](http://github.com/isaacs/ejsgi) reference
-implementation into a directory at the same level as Scylla.  (This is so
-that the examples are able to find EJSGI.  If you want to install EJSGI in
-another directory, either add this directory to the `NODE_PATH` environment
-variable, or modify the examples themselves.)
-
-Then, run the examples from the `examples` directory:
+There are a few Scylla demos in the `examples` directory:
 
     $ node static.js 
     Server running at http://127.0.0.1:8000/
