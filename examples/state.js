@@ -9,11 +9,9 @@ function NameDemo(name) {
     this.name = name;
 }
 
-NameDemo.prototype = Object.create(scylla.Base.prototype);
+NameDemo.prototype = scylla.inherit(scylla.Base.prototype, {
 
-process.mixin(NameDemo.prototype, {
-
-    send: function(req, res) {
+    send: function (req, res) {
 
         var body = JSON.stringify(this.name) + "\n";
 
@@ -28,13 +26,13 @@ process.mixin(NameDemo.prototype, {
 
     // curl -i -s http://127.0.0.1:8000/name
 
-    "GET /name": function(req, res) {
+    "GET /name": function (req, res) {
         return this.send(req, res);
     },
 
     // curl -i -s -X PUT -d '"Michael"' http://127.0.0.1:8000/name
 
-    "PUT /name": function(req, res) {
+    "PUT /name": function (req, res) {
 
         var body = "", self = this;
 

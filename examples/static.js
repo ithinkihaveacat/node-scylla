@@ -17,11 +17,9 @@ function Static(docroot) {
 
 }
 
-Static.prototype = Object.create(scylla.Base.prototype);
+Static.prototype = scylla.inherit(scylla.Base.prototype, {
 
-process.mixin(Static.prototype, {
-
-    'log': function(path) {
+    'log': function (path) {
         if (path in this.count) {
             this.count[path]++;
         } else {
@@ -29,7 +27,7 @@ process.mixin(Static.prototype, {
         }
     },
 
-    'GET (/status)': function(req, res, matches) {
+    'GET (/status)': function (req, res, matches) {
 
         this.log(matches[1]);
 
@@ -44,12 +42,12 @@ process.mixin(Static.prototype, {
 
     },
 
-    "GET /$": function(req, res) {
+    "GET /$": function (req, res) {
         req.url += "index.html";
         return this.dispatch(req, res);
     },
 
-    'GET (.*)': function(req, res, matches) {
+    'GET (.*)': function (req, res, matches) {
 
         var self = this;
 

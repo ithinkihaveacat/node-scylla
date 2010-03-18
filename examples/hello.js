@@ -8,9 +8,7 @@ function HelloWorld(name) {
     this.name = name;
 }
 
-HelloWorld.prototype = Object.create(scylla.Base.prototype);
-
-process.mixin(HelloWorld.prototype, {
+HelloWorld.prototype = scylla.inherit(scylla.Base.prototype, {
 
     "GET /": function(req, res) {
         
