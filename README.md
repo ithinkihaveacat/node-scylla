@@ -1,7 +1,6 @@
 # Scylla
 
-An [EJSGI-compatible](http://github.com/isaacs/ejsgi) router/microframework
-for [NodeJS](http://nodejs.org/).
+A router/microframework for [NodeJS](http://nodejs.org/).
 
 A Scylla application is simply a JavaScript object that inherits from
 `scylla.Base`.  To figure out how to route a request, Scylla looks the
@@ -36,12 +35,12 @@ returns a function suitable for passing to `http.createServer(...)`:
 
             var body = "Hello, " + this.name + "!\n";
 
-            res.writeHeader(200, {
+            res.writeHead(200, {
                 "content-type": "text/plain",
                 "content-length": body.length
             });
             res.write(body);
-            res.close();
+            res.end();
 
         }
 
