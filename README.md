@@ -27,12 +27,10 @@ returns a function suitable for passing to `http.createServer(...)`:
         this.name = name;
     }
 
-    HelloWorld.prototype = Object.create(scylla.Base.prototype);
+    HelloWorld.prototype = scylla.beget({
 
-    process.mixin(HelloWorld.prototype, {
-
-        "GET /": function(req, res) {
-
+        "GET /$": function(req, res) {
+        
             var body = "Hello, " + this.name + "!\n";
 
             res.writeHead(200, {

@@ -8,7 +8,7 @@ function HelloWorld(name) {
     this.name = name;
 }
 
-HelloWorld.prototype = scylla.inherit(scylla.Base.prototype, {
+HelloWorld.prototype = scylla.beget({
 
     "GET /$": function(req, res) {
         

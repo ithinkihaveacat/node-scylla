@@ -17,7 +17,7 @@ function Static(docroot) {
 
 }
 
-Static.prototype = scylla.inherit(scylla.Base.prototype, {
+Static.prototype = scylla.beget({
 
     'log': function (path) {
         if (path in this.count) {

@@ -9,7 +9,7 @@ function NameDemo(name) {
     this.name = name;
 }
 
-NameDemo.prototype = scylla.inherit(scylla.Base.prototype, {
+NameDemo.prototype = scylla.beget({
 
     send: function (req, res) {
 
