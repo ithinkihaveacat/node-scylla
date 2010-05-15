@@ -15,12 +15,12 @@ NameDemo.prototype = scylla.inherit(scylla.Base.prototype, {
 
         var body = JSON.stringify(this.name) + "\n";
 
-        res.writeHeader(200, {
+        res.writeHead(200, {
             "content-type": "application/json",
             "content-length": body.length
         });
         res.write(body);
-        res.close();
+        res.end();
 
     },
 

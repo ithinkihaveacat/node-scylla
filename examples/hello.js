@@ -10,16 +10,16 @@ function HelloWorld(name) {
 
 HelloWorld.prototype = scylla.inherit(scylla.Base.prototype, {
 
-    "GET /": function(req, res) {
+    "GET /$": function(req, res) {
         
         var body = "Hello, " + this.name + "!\n";
 
-        res.writeHeader(200, {
+        res.writeHead(200, {
             "content-type": "text/plain",
             "content-length": body.length
         });
         res.write(body);
-        res.close();
+        res.end();
 
     }
 

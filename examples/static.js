@@ -33,12 +33,12 @@ Static.prototype = scylla.inherit(scylla.Base.prototype, {
 
         var body = sys.inspect(this.count) + "\n";
 
-        res.writeHeader(200, {
+        res.writeHead(200, {
             "content-type": "application/json",
             "content-length": body.length
         });
         res.write(body);
-        res.close();
+        res.end();
 
     },
 
@@ -57,8 +57,8 @@ Static.prototype = scylla.inherit(scylla.Base.prototype, {
         var filename = path.join(this.docroot, matches[1]);
 
         if (filename.indexOf(this.docroot) !== 0) {
-            res.writeHeader(404, {});
-            res.close();
+            res.writeHead(404, {});
+            res.end();
             return;
         }
 
@@ -68,19 +68,19 @@ Static.prototype = scylla.inherit(scylla.Base.prototype, {
         fs.readFile(filename, encoding, function (error, body) {
 
             if (error) {
-                res.writeHeader(404, {});
-                res.close();
+                res.writeHead(404, {});
+                res.end();
                 return;
             }
 
             self.log(matches[1]);
 
-            res.writeHeader(200, {
+            res.writeHead(200, {
                 "content-type": contentType,
                 "content-length": body.length
             });
             res.write(body);
-            res.close();
+            res.end();
 
         });
 
