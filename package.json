@@ -1,0 +1,8 @@
+{ "readme": "http://github.com/isaacs/npm#readme"
+, "version": "0.1.0"
+, "description": "Simple router/microframework for NodeJS"
+, "main": "./lib/scylla"
+, "author": "Michael Stillwell <mjs@beebo.org>"
+, "name": "scylla"
+, "engines": { "node": ">=0.1.95" }
+}
