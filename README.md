@@ -2,6 +2,14 @@
 
 A router/microframework for [NodeJS](http://nodejs.org/).
 
+Scylla:
+
+  * Is tightly tied to HTTP--there's no HTTP abstraction going on.
+  * Handles all HTTP verbs more or less equivalently--it's no more
+  difficult to handle a DELETE than a GET, for example.
+  * Uses standard regular expressions to do the URL matching and
+  routing. 
+
 A Scylla application is simply a JavaScript object that inherits from
 `scylla.Base`.  To figure out how to route a request, Scylla looks the
 method names of this object, which double as URL-matching patterns: the
