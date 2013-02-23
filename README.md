@@ -1,4 +1,4 @@
-# Scylla
+# Scylla [![Build Status](https://travis-ci.org/ithinkihaveacat/node-scylla.png)](https://travis-ci.org/ithinkihaveacat/node-scylla)
 
 A router/microframework for [NodeJS](http://nodejs.org/).
 
