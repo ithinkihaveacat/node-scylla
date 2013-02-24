@@ -1,92 +1,83 @@
-require.paths.unshift("../lib");
-
-var scylla = require('scylla'),
-    mime = require('mime'),
-    sys = require('sys'),
-    url = require('url'),
-    fs = require('fs'),
-    events = require('events'),
-    path = require('path');
+var Scylla = require('../lib/scylla');
+var mime = require('../lib/mime');
+var url = require('url');
+var fs = require('fs');
+var path = require('path');
+var sys = require('sys');
 
 function Static(docroot) {
-
-    scylla.Base.call(this);
-
     this.count = {};
     this.docroot = path.join(process.cwd(), docroot);
-
+    Scylla.call(this);
 }
 
-Static.prototype = scylla.beget({
+require('util').inherits(Static, Scylla);
 
-    'log': function (path) {
-        if (path in this.count) {
-            this.count[path]++;
-        } else {
-            this.count[path] = 1;
-        }
-    },
+Static.prototype.log = function (path) {
+    if (path in this.count) {
+        this.count[path]++;
+    } else {
+        this.count[path] = 1;
+    }
+};
 
-    'GET (/status)': function (req, res, matches) {
+Static.prototype['GET (/status)'] = function (req, res, matches) {
 
-        this.log(matches[1]);
+    this.log(matches[1]);
 
-        var body = sys.inspect(this.count) + "\n";
+    var body = sys.inspect(this.count) + "\n";
 
-        res.writeHead(200, {
-            "content-type": "application/json",
-            "content-length": body.length
-        });
-        res.write(body);
+    res.writeHead(200, {
+        "content-type": "application/json"
+    });
+    res.write(body);
+    res.end();
+
+};
+
+Static.prototype["GET /$"] = function (req, res) {
+    req.url += "index.html";
+    return this.dispatch(req, res);
+};
+
+Static.prototype['GET (.*)'] = function (req, res, matches) {
+
+    var self = this;
+
+    // Check that the docroot is a parent directory of the requested file.
+    // i.e. prevent against http://foo/../../etc/passwd.
+
+    var filename = path.join(this.docroot, matches[1]);
+
+    if (filename.indexOf(this.docroot) !== 0) {
+        res.writeHead(404, {});
         res.end();
+        return;
+    }
 
-    },
+    var contentType = mime.extToType(path.extname(req.url));
+    var encoding = contentType.slice(0, 4) === "text" ? "utf8" : "binary"; // TODO Not very reliable!
 
-    "GET /$": function (req, res) {
-        req.url += "index.html";
-        return this.dispatch(req, res);
-    },
+    fs.readFile(filename, encoding, function (error, body) {
 
-    'GET (.*)': function (req, res, matches) {
-
-        var self = this;
-
-        // Check that the docroot is a parent directory of the requested file.
-        // i.e. prevent against http://foo/../../etc/passwd.
-
-        var filename = path.join(this.docroot, matches[1]);
-
-        if (filename.indexOf(this.docroot) !== 0) {
+        if (error) {
             res.writeHead(404, {});
             res.end();
             return;
         }
 
-        var contentType = mime.extToType(path.extname(req.url));
-        var encoding = contentType.slice(0, 4) === "text" ? "utf8" : "binary"; // TODO Not very reliable!
+        self.log(matches[1]);
 
-        fs.readFile(filename, encoding, function (error, body) {
-
-            if (error) {
-                res.writeHead(404, {});
-                res.end();
-                return;
-            }
-
-            self.log(matches[1]);
-
-            res.writeHead(200, {
-                "content-type": contentType,
-                "content-length": body.length
-            });
-            res.write(body);
-            res.end();
-
+        res.writeHead(200, {
+            "content-type": contentType,
+            "content-length": body.length
         });
+        res.write(body);
+        res.end();
 
-    }
+    });
 
-});
+};
 
 DEBUG = true;
 

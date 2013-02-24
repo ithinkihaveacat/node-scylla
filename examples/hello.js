@@ -1,36 +1,32 @@
-require.paths.unshift("../lib");
-
-var sys = require('sys'),
-    scylla = require('scylla');
+var Scylla = require('../lib/scylla');
 
 function HelloWorld(name) {
-    scylla.Base.call(this);
     this.name = name;
+    Scylla.call(this);
 }
 
-HelloWorld.prototype = scylla.beget({
+require('util').inherits(HelloWorld, Scylla);
 
-    "GET /$": function(req, res) {
+HelloWorld.prototype["GET /$"] = function(req, res) {
         
-        var body = "Hello, " + this.name + "!\n";
+    var body = "Hello, " + this.name + "!\n";
 
-        res.writeHead(200, {
-            "content-type": "text/plain",
-            "content-length": body.length
-        });
-        res.write(body);
-        res.end();
+    res.writeHead(200, {
+        "content-type": "text/plain",
+    });
+    res.write(body);
+    res.end();
 
-    }
+};
 
-});
+var hello = new HelloWorld("Clem");
 
-DEBUG = true;
+var server = require('http').Server();
+server.on('request', hello.request.bind(hello));
+server.listen(8000);
 
-require('http').createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
-
-sys.puts('Server running at http://127.0.0.1:8000/');
-sys.puts('');
-sys.puts('Example:');
-sys.puts('');
-sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/');
+console.log('Server running at http://127.0.0.1:8000/');
+console.log('');
+console.log('Example:');
+console.log('');
+console.log('  $ curl -i -s -X GET http://127.0.0.1:8000/');

@@ -1,63 +1,61 @@
-require.paths.unshift("../lib");
-
-var sys = require('sys'),
-    events = require('events'),
-    scylla = require('scylla');
+var Scylla = require('../lib/scylla');
 
 function NameDemo(name) {
-    scylla.Base.call(this);
     this.name = name;
+    Scylla.call(this);
 }
 
-NameDemo.prototype = scylla.beget({
+require('util').inherits(NameDemo, Scylla);
 
-    send: function (req, res) {
+NameDemo.prototype.send = function (req, res) {
 
-        var body = JSON.stringify(this.name) + "\n";
+    var body = JSON.stringify(this.name) + "\n";
 
-        res.writeHead(200, {
-            "content-type": "application/json",
-            "content-length": body.length
-        });
-        res.write(body);
-        res.end();
+    res.writeHead(200, {
+        "content-type": "application/json",
+        "content-length": body.length
+    });
+    res.write(body);
+    res.end();
 
-    },
+};
 
-    // curl -i -s http://127.0.0.1:8000/name
+// curl -i -s http://127.0.0.1:8000/name
 
-    "GET /name": function (req, res) {
-        return this.send(req, res);
-    },
+NameDemo.prototype["GET /name"] = function (req, res) {
+    return this.send(req, res);
+};
 
-    // curl -i -s -X PUT -d '"Michael"' http://127.0.0.1:8000/name
+// curl -i -s -X PUT -d '"Michael"' http://127.0.0.1:8000/name
 
-    "PUT /name": function (req, res) {
+NameDemo.prototype["PUT /name"] = function (req, res) {
 
-        var body = "", self = this;
+    var body = "", self = this;
 
-        req.addListener("data", function(s) {
-            body += s;
-        });
-        
-        req.addListener("end", function() {
-            self.name = JSON.parse(body); // Assumes body is JSON
-            sys.debug("Setting name to " + self.name);
-            self.send(req, res);
-        });
+    req.addListener("data", function(s) {
+        body += s;
+    });
+    
+    req.addListener("end", function() {
+        self.name = JSON.parse(body); // Assumes body is JSON
+        console.info("Setting name to " + self.name);
+        self.send(req, res);
+    });
 
-    }
-
-});
+};
 
 DEBUG = true;
 
-require('http').createServer(new NameDemo("Clem").adapter('nodejs')).listen(8000);
+var nameDemo = new NameDemo("Clem");
 
-sys.puts('Server running at http://127.0.0.1:8000/');
-sys.puts('');
-sys.puts('Examples:');
-sys.puts('');
-sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/name');
-sys.puts('  $ curl -i -s -X PUT -d \'"Michael"\' http://127.0.0.1:8000/name');
-sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/name');
+var server = require('http').Server();
+server.on('request', nameDemo.request.bind(nameDemo));
+server.listen(8000);
+
+console.log('Server running at http://127.0.0.1:8000/');
+console.log('');
+console.log('Examples:');
+console.log('');
+console.log('  $ curl -i -s -X GET http://127.0.0.1:8000/name');
+console.log('  $ curl -i -s -X PUT -d \'"Michael"\' http://127.0.0.1:8000/name');
+console.log('  $ curl -i -s -X GET http://127.0.0.1:8000/name');
