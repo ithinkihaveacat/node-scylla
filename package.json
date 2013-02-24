@@ -2,13 +2,11 @@
     "name": "scylla",
     "author": "Michael Stillwell <mjs@beebo.org>",
     "homepage": "https://github.com/ithinkihaveacat/node-scylla",
+    "repository": "git://github.com/ithinkihaveacat/node-scylla.git",
     "bugs": "https://github.com/ithinkihaveacat/node-scylla/issues",
-    "version": "0.2.0",
+    "version": "v0.2.1",
     "description": "Simple router/microframework for NodeJS",
     "main": "./lib/scylla",
-    "directories": {
-        "lib": "./lib"
-    },
     "engines": {
         "node": ">=0.8"
     },

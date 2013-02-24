@@ -10,51 +10,52 @@ Scylla:
   * Uses standard regular expressions to do the URL matching and
   routing. 
 
-A Scylla application is simply a JavaScript object that inherits from
-`scylla.Base`.  To figure out how to route a request, Scylla looks the
-method names of this object, which double as URL-matching patterns: the
-method `GET /user/(.*)` is invoked when a `GET` request is made for a URL
-like `/user/mjs`.  (And `mjs` is passed as an argument to the method.)
+A Scylla application is simply a JavaScript object that inherits from `Scylla`.
+To figure out how to route a request, Scylla looks the method names of this
+object, which double as URL-matching patterns: the method `GET /user/(.*)` is
+invoked when a `GET` request is made for a URL like `/user/mjs`. (And `mjs` is
+passed as an argument to the method.)
 
-If `myapp` is a Scylla object, calling the `dispatcher()` method on it
-returns a function suitable for passing to `http.createServer(...)`:
+You can create a web server from a `myapp` object by passing it to a `http.Server` as follows:
 
-    http.createServer(myapp.adapter('nodejs')).listen(8000);
+    http.createServer(function (req, res) {
+      myapp.request(req, res);
+    }).listen(8000);
+
+Or, equivalently, but shorter:
+
+    http.createServer(myapp.request.call(myapp)).listen(8000);
 
 ## Examples
 
 ### Hello, World
 
-    require.paths.unshift("../lib");
-
-    var sys = require('sys'),
-        scylla = require('scylla');
+    var Scylla = require('../lib/scylla');
 
     function HelloWorld(name) {
-        scylla.Base.call(this);
         this.name = name;
+        Scylla.call(this);
     }
 
-    HelloWorld.prototype = scylla.beget({
+    require('util').inherits(HelloWorld, Scylla);
 
-        "GET /$": function(req, res) {
-        
-            var body = "Hello, " + this.name + "!\n";
+    HelloWorld.prototype["GET /$"] = function(req, res) {
+            
+        var body = "Hello, " + this.name + "!\n";
 
-            res.writeHead(200, {
-                "content-type": "text/plain",
-                "content-length": body.length
-            });
-            res.write(body);
-            res.end();
+        res.writeHead(200, {
+            "content-type": "text/plain",
+        });
+        res.write(body);
+        res.end();
 
-        }
+    };
 
-    });
+    var hello = new HelloWorld("Clem");
 
-    DEBUG = true;
-
-    require('http').createServer(new HelloWorld("Michael").adapter('nodejs')).listen(8000);
+    var server = require('http').Server();
+    server.on('request', hello.request.bind(hello));
+    server.listen(8000);
 
 ### Other Examples
 
