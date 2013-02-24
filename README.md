@@ -1,4 +1,4 @@
-# Scylla [![Build Status](https://travis-ci.org/ithinkihaveacat/node-scylla.png)](https://travis-ci.org/ithinkihaveacat/node-scylla)
+# Scylla [![Build Status](https://travis-ci.org/ithinkihaveacat/node-scylla.png?branch=master)](https://travis-ci.org/ithinkihaveacat/node-scylla)
 
 A router/microframework for [NodeJS](http://nodejs.org/).
 
@@ -18,56 +18,64 @@ passed as an argument to the method.)
 
 You can create a web server from a `myapp` object by passing it to a `http.Server` as follows:
 
-    http.createServer(function (req, res) {
-      myapp.request(req, res);
-    }).listen(8000);
+````js
+http.createServer(function (req, res) {
+  myapp.request(req, res);
+}).listen(8000);
+````
 
-Or, equivalently, but shorter:
+Or, equivalently (but shorter):
 
-    http.createServer(myapp.request.call(myapp)).listen(8000);
+````js
+http.createServer(myapp.request.call(myapp)).listen(8000);
+````
 
 ## Examples
 
 ### Hello, World
 
-    var Scylla = require('../lib/scylla');
+````js
+var Scylla = require('../lib/scylla');
 
-    function HelloWorld(name) {
-        this.name = name;
-        Scylla.call(this);
-    }
+function HelloWorld(name) {
+    this.name = name;
+    Scylla.call(this);
+}
 
-    require('util').inherits(HelloWorld, Scylla);
+require('util').inherits(HelloWorld, Scylla);
 
-    HelloWorld.prototype["GET /$"] = function(req, res) {
-            
-        var body = "Hello, " + this.name + "!\n";
+HelloWorld.prototype["GET /$"] = function(req, res) {
+        
+    var body = "Hello, " + this.name + "!\n";
 
-        res.writeHead(200, {
-            "content-type": "text/plain",
-        });
-        res.write(body);
-        res.end();
+    res.writeHead(200, {
+        "content-type": "text/plain",
+    });
+    res.write(body);
+    res.end();
 
-    };
+};
 
-    var hello = new HelloWorld("Clem");
+var hello = new HelloWorld("Clem");
 
-    var server = require('http').Server();
-    server.on('request', hello.request.bind(hello));
-    server.listen(8000);
+var server = require('http').Server();
+server.on('request', hello.request.bind(hello));
+server.listen(8000);
+````
 
 ### Other Examples
 
 There are a few Scylla demos in the `examples` directory:
 
-    $ node static.js 
-    Server running at http://127.0.0.1:8000/
+````sh
+$ node static.js 
+Server running at http://127.0.0.1:8000/
 
-    Examples:
+Examples:
 
-      $ curl -i -s -X GET http://127.0.0.1:8000/static.js
-      $ curl -i -s -X GET http://127.0.0.1:8000/status
+  $ curl -i -s -X GET http://127.0.0.1:8000/static.js
+  $ curl -i -s -X GET http://127.0.0.1:8000/status
+````
 
 ## Author
 
