@@ -37,7 +37,7 @@ Static.prototype['GET (/status)'] = function (req, res, matches) {
 
 Static.prototype["GET /$"] = function (req, res) {
     req.url += "index.html";
-    return this.dispatch(req, res);
+    this.request(req, res); // forward/redirect
 };
 
 Static.prototype['GET (.*)'] = function (req, res, matches) {
@@ -79,13 +79,15 @@ Static.prototype['GET (.*)'] = function (req, res, matches) {
 
 };
 
-DEBUG = true;
+var static = new Static(".");
 
-require('http').createServer(new Static(".").adapter('nodejs')).listen(8000);
+var server = require('http').Server();
+server.on('request', static.request.bind(static));
+server.listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');
 sys.puts('');
 sys.puts('Examples:');
 sys.puts('');
-sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/' + path.basename(process.ARGV[1]));
+sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/' + path.basename(process.argv[1]));
 sys.puts('  $ curl -i -s -X GET http://127.0.0.1:8000/status');
