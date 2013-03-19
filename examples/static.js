@@ -1,6 +1,9 @@
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:false, strict:true, undef:true, unused:true, curly:true, node:true, indent:4, maxerr:50, globalstrict:true */
+
+"use strict";
+
 var Scylla = require('../lib/scylla');
 var mime = require('../lib/mime');
-var url = require('url');
 var fs = require('fs');
 var path = require('path');
 var sys = require('sys');
@@ -79,10 +82,10 @@ Static.prototype['GET (.*)'] = function (req, res, matches) {
 
 };
 
-var static = new Static(".");
+var listener = new Static(".");
 
 var server = require('http').Server();
-server.on('request', static.request.bind(static));
+server.on('request', listener.request.bind(listener));
 server.listen(8000);
 
 sys.puts('Server running at http://127.0.0.1:8000/');

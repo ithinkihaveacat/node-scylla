@@ -1,3 +1,7 @@
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:false, strict:true, undef:true, unused:true, curly:true, node:true, indent:4, maxerr:50, globalstrict:true */
+
+"use strict";
+
 var Scylla = require('../lib/scylla');
 
 function HelloWorld(name) {
@@ -12,7 +16,7 @@ HelloWorld.prototype["GET /$"] = function(req, res) {
     var body = "Hello, " + this.name + "!\n";
 
     res.writeHead(200, {
-        "content-type": "text/plain",
+        "content-type": "text/plain"
     });
     res.write(body);
     res.end();
