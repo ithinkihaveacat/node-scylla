@@ -1,2 +1,3 @@
 test:
-	node base.js
+	node simple.js
+	node hello.js
