@@ -12,7 +12,7 @@ Scylla:
 
 A Scylla application is simply a JavaScript object that inherits from `Scylla`.
 To figure out how to route a request, Scylla looks the method names of this
-object, which double as URL-matching patterns: the method `GET /user/(.*)` is
+object, which doubles as URL-matching patterns: the method `GET /user/(.*)` is
 invoked when a `GET` request is made for a URL like `/user/mjs`. (And `mjs` is
 passed as an argument to the method.)
 
@@ -27,7 +27,7 @@ http.createServer(function (req, res) {
 Or, equivalently (but shorter):
 
 ````js
-http.createServer(myapp.request.call(myapp)).listen(8000);
+http.createServer(myapp.request.bind(myapp)).listen(8000);
 ````
 
 ## Examples
